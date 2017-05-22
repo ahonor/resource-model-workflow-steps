@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+
+import argparse
+import yaml
+import fileinput
+import logging
+import sys
+import os
+
+formatter = logging.Formatter()
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, 
+	                 format='%(levelname)s: %(name)s: %(message)s')
+log = logging.getLogger('add-linux-node')
+
+parser = argparse.ArgumentParser(description='Add a linux node to the model source directory.')
+parser.add_argument('nodename', help='the unique node name')
+parser.add_argument('username', help='the username')
+parser.add_argument('hostname', help='the hostname')
+parser.add_argument('node_executor', help='the node-executor')
+parser.add_argument('file_copier', help='the file-copier')
+parser.add_argument('filecopy_destdir', help='directory to execute adhoc scripts')
+parser.add_argument('ssh_authentication', help='the ssh authentication type')
+parser.add_argument('ssh_key_storage_path', help='the ssh key storage path')
+parser.add_argument('tags', help='comma seprated tags')
+parser.add_argument('resource_model_dir', help='the resource model directory path')
+args = parser.parse_args()
+
+outfile = os.path.join(args.resource_model_dir.rstrip(), args.nodename+'.yaml')
+
+if os.path.isdir(os.path.dirname(outfile)):
+    log.debug("directory ok: "+ args.resource_model_dir)
+else:
+	log.error("Not a directory: '"+ os.path.dirname(outfile)+"'")
+	sys.exit(2)
+
+if os.path.exists(outfile):
+	log.warn("Existing file will be overwritten: "+ outfile)
+
+d = {
+	args.nodename:{
+	'nodename':args.nodename, 
+	'hostname':args.hostname, 
+	'username':args.username, 
+	'tags':args.tags,	
+	'node-executor':args.node_executor,
+	'file-copier':args.file_copier,
+	'file-copier-destdir':args.filecopy_destdir,	
+	'ssh-authentication':args.ssh_authentication,
+	'ssh-key-storage-path':args.ssh_key_storage_path,
+	'osName':'Linux',
+	'osFamily':'unix',
+	}
+}
+
+with open(outfile, 'w') as yaml_file:
+    yaml.dump(d, yaml_file, default_flow_style=False)
+
+log.info('Wrote file: ' + outfile)
+
+# Done
+sys.exit(0)

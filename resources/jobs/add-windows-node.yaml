@@ -1,0 +1,35 @@
+- description: 'sample job that calls the add-windows-node step plugin'
+  executionEnabled: true
+  loglevel: INFO
+  name: add-windows-node
+  nodeFilterEditable: false
+  options:
+  - name: name
+    required: true
+  - name: hostname
+    required: true
+  - name: username
+    required: true
+  - name: tags
+  scheduleEnabled: true
+  sequence:
+    commands:
+    - configuration:
+        authentication: Default
+        file-copier: win-ps-file-copy
+        file-copy-destdir: c:\windows\temp
+        hostname: ${option.hostname}
+        name: ${option.name}
+        node-executor: win-ps-node-exec
+        password-storage-path: keys/blah
+        resource-model-dir: /tmp/resources
+        tags: ${option.tags}
+        useSSL: 'true'
+        username: ${option.username}
+      nodeStep: false
+      type: philasd-nodes-add-windows-node
+    keepgoing: false
+    pluginConfig:
+      WorkflowStrategy:
+        node-first: null
+    strategy: node-first

@@ -1,0 +1,132 @@
+name: philasd-nodes-steps
+version: 1.0.0
+rundeckPluginVersion: 1.2
+author: alexh
+date: "Mon May 15 12:05:36 PDT 2017"
+providers:
+  - name: philasd-nodes-add-linux-node
+    service: WorkflowStep
+    title: 'add linux node'
+    description: 'Define a new node'
+    plugin-type: script
+    script-interpreter: python -u
+    script-file: add-linux-node 
+    script-args: >
+      ${config.name} ${config.username} ${config.hostname}
+      ${config.node-executor} ${config.file-copier}
+      ${config.file-copy-destdir} ${config.ssh-authentication}
+      ${config.ssh-key-storage-path} ${config.tags}
+      ${config.resource-model-dir}
+    config:
+      - type: String
+        name: name
+        title: 'Node name'
+        required: true
+      - type: String
+        name: hostname
+        title: Hostname
+        required: true
+      - type: String
+        name: username
+        title: Username
+        required: true
+      - type: String
+        name: tags
+        title: 'Tags'        
+      - type: FreeSelect
+        name: node-executor
+        title: Node executor plugin
+        default: jsch-ssh
+        values: 'jsch-ssh,script'
+        required: true
+      - type: FreeSelect
+        name: file-copier
+        title: File copier plugin
+        default: jsch-scp
+        values: 'jsch-scp,script'
+        required: true
+      - type: String
+        name: file-copy-destdir
+        title: 'File copy destdir'
+        default: /tmp
+        required: true
+      - type: Select
+        name: ssh-authentication
+        title: 'SSH authentication type'
+        required: true
+        values: password,privateKey
+        required: true
+      - type: String
+        name: ssh-key-storage-path
+        title: 'Path in keystore'
+        required: true
+      - type: String
+        name: resource-model-dir
+        title: 'Resource Model Directory'
+        required: true
+  - name: philasd-nodes-add-windows-node
+    service: WorkflowStep
+    title: 'add windows node'
+    description: 'Define a new windows node'
+    plugin-type: script
+    script-interpreter: python -u
+    script-file: add-windows-node 
+    script-args: >
+      ${config.name} ${config.username} ${config.hostname}
+      ${config.node-executor} ${config.file-copier}
+      ${config.file-copy-destdir} ${config.authentication}
+      ${config.useSSL} ${config.password-storage-path} ${config.tags}
+      ${config.resource-model-dir}
+    config:
+      - type: String
+        name: name
+        title: 'Node name'
+        required: true
+      - type: String
+        name: hostname
+        title: Hostname
+        required: true
+      - type: String
+        name: username
+        title: Username
+        required: true
+      - type: String
+        name: tags
+        title: 'Tags'
+      - type: FreeSelect
+        name: node-executor
+        title: Node executor plugin
+        default: win-ps-node-exec
+        values: 'win-ps-node-exec,script'
+        required: true
+      - type: FreeSelect
+        name: file-copier
+        title: File copier plugin
+        default: win-ps-file-copy
+        values: 'win-ps-file-copy,script'
+        required: true
+      - type: String
+        name: file-copy-destdir
+        title: 'File copy destdir'
+        default: 'c:\windows\temp'
+        required: true
+      - type: Boolean
+        name: useSSL
+        title: 'SSL?'
+        required: true        
+      - type: Select
+        name: authentication
+        title: 'Authentication type'
+        required: true
+        values: Default,Basic,CredSSP
+        required: true
+      - type: String
+        name: password-storage-path
+        title: 'Password in keystore'
+        required: true
+      - type: String
+        name: resource-model-dir
+        title: 'Resource Model Directory'
+        required: true
+
+
